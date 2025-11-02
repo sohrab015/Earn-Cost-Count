@@ -17,11 +17,16 @@ function updateUI() {
     transactions.forEach((t, index) => {
         const li = document.createElement('li')
         li.classList.add(t.amount > 0 ? 'income' : 'expense')
-        li.innerHTML = `
+        li.innerHTML =
+        `
             <span class="desc">${t.desc}</span>
             <span class="amount">৳${t.amount}</span>
-            <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
-            `
+            <div class="action-btns">
+                <button class="edit-btn" onclick="editTransaction(${index})">✎</button>
+                <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
+            </div>
+        `
+
         transactionList.appendChild(li)
 
         if (t.amount > 0) income += t.amount
@@ -34,6 +39,15 @@ function updateUI() {
     expenseEl.textContent = `৳${Math.abs(expense)}`
 
     localStorage.setItem('transactions', JSON.stringify(transactions))
+
+    if (balance > 0) {
+        balanceEl.style.color = "green"
+    } else if (balance < 0) {
+        balanceEl.style.color = "red"
+    } else {
+        balanceEl.style.color = "#01040aff"
+    }
+
 }
 
 addBtn.addEventListener('click', () => {
@@ -52,5 +66,22 @@ function deleteTransaction(index) {
     transactions.splice(index, 1)
     updateUI()
 }
+
+function editTransaction(index) {
+    const newDesc = prompt("Edit Description:", transactions[index].desc)
+    const newAmount = prompt("Edit Amount:", transactions[index].amount)
+
+    if (newDesc === null || newAmount === null) return
+    if (newDesc.trim() === "" || isNaN(parseFloat(newAmount))) {
+        alert("Invalid input")
+        return
+    }
+
+    transactions[index].desc = newDesc.trim()
+    transactions[index].amount = parseFloat(newAmount)
+
+    updateUI()
+}
+
 
 updateUI()

@@ -4,7 +4,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* height: 100vh; */
 }
 
 .container {
@@ -54,12 +53,15 @@ input {
     padding: 15px;
     margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
+    border: none;
+
+    background-color: rgb(224, 224, 244);
 }
 
-.input button{
+.input button {
     width: 60%;
-    margin: 10px ;
+    margin: 10px;
 }
 
 button {
@@ -91,6 +93,7 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 li.income {
@@ -99,6 +102,20 @@ li.income {
 
 li.expense {
     border-color: red;
+}
+
+.desc {
+    flex: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.amount {
+    min-width: 80px;
+    text-align: right;
+    font-weight: 600;
 }
 
 .delete-btn {

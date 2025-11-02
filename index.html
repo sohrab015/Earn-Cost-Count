@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>💰 Expense Tracker</h1>
+
+        <div class="balance">
+            <h2>Your Balance</h2>
+            <h3 id="balance">৳0</h3>
+        </div>
+
+        <div class="summary">
+            <div class="income">
+                <h4>Income</h4>
+                <p id="income">৳0</p>
+            </div>
+            <div class="expense">
+                <h4>Expense</h4>
+                <p id="expense">৳0</p>
+            </div>
+        </div>
+
+        <div class="input">
+            <h3>Add Transaction</h3>
+            <input type="text" id="descInput" placeholder="Enter Description..." />
+            <input type="number" id="amountInput" placeholder="Enter Amount [use Minus(-) for Expense]" />
+            <button id="addBtn">Add</button>
+        </div>
+
+        <h3>History</h3>
+        <ul id="transactionList"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

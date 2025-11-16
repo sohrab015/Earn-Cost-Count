@@ -2,272 +2,47 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Expense Tracker + Firebase Auth</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f2f2f2;
-    }
-
-    #authSection,
-    #appSection {
-      width: 350px;
-      margin: 50px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 9px 0;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    #transactionList li {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px;
-      background: #fff;
-      margin-top: 6px;
-      border-radius: 6px;
-      border-left: 5px solid;
-    }
-
-    .income {
-      border-color: green;
-    }
-
-    .expense {
-      border-color: red;
-    }
-
-    .action-btns button {
-      margin-left: 5px;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-
-  <!-- Authentication UI -->
-  <div id="authSection">
-    <h2 id="authTitle">Login</h2>
-
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button id="authBtn">Login</button>
-
-    <p id="toggleAuth">
-      Don't have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Sign Up</span>
-    </p>
+<body> <!-- Authentication Section -->
+  <div id="authSection" class="card auth-container">
+    <h1>💰 Expense Tracker</h1>
+    <div id="authBox">
+      <h3 id="authTitle">Login</h3> <input type="text" id="username" placeholder="Username" autocomplete="username" />
+      <input type="password" id="password" placeholder="Password" autocomplete="current-password" /> <button
+        id="authBtn" class="primary">Login</button>
+      <p id="toggleAuth">Don't have an account? <span id="toggleLink">Sign Up</span></p>
+    </div>
+  </div> <!-- Expense Tracker App (original UI) -->
+  <div class="container card" id="appSection" style="display:none;">
+    <h1>💰 Expense Tracker</h1>
+    <div class="balance">
+      <h2>Your Balance</h2>
+      <h3 id="balance">৳0</h3>
+    </div>
+    <div class="summary">
+      <div class="income">
+        <h4>Income</h4>
+        <p id="income">৳0</p>
+      </div>
+      <div class="expense">
+        <h4>Expense</h4>
+        <p id="expense">৳0</p>
+      </div>
+    </div>
+    <div class="input">
+      <h3>Add Transaction</h3> <input type="text" id="descInput" placeholder="Enter Description..." /> <input
+        type="number" id="amountInput" placeholder="Enter Amount [use Minus(-) for Expense]" /> <button id="addBtn"
+        class="primary">Add</button>
+    </div>
+    <h3>History</h3>
+    <ul id="transactionList"></ul> <button id="logoutBtn" class="logout">Logout</button>
   </div>
-
-  <!-- Main App -->
-  <div id="appSection" style="display:none;">
-    <h2>Expense Tracker</h2>
-
-    <h3>Balance: <span id="balance">৳0</span></h3>
-    <p>Income: <span id="income">৳0</span></p>
-    <p>Expense: <span id="expense">৳0</span></p>
-
-    <input id="descInput" placeholder="Description">
-    <input id="amountInput" placeholder="Amount">
-
-    <button id="addBtn">Add</button>
-    <button id="logoutBtn" style="background:red;color:white;">Logout</button>
-
-    <ul id="transactionList"></ul>
-  </div>
-
-
-  <script type="module">
-
-    /* -------------------------------
-       Firebase Setup
-    --------------------------------*/
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCSSwkgrigkZfau6uTJF-6j5ECepCisR7I",
-      authDomain: "earn-cost-count.firebaseapp.com",
-      projectId: "earn-cost-count",
-      storageBucket: "earn-cost-count.firebasestorage.app",
-      messagingSenderId: "318934337712",
-      appId: "1:318934337712:web:b69a340ffd1bde45705375",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-
-    /* -------------------------------
-       DOM
-    --------------------------------*/
-    const authSection = document.getElementById("authSection");
-    const appSection = document.getElementById("appSection");
-
-    const emailInput = document.getElementById("email");
-    const passInput = document.getElementById("password");
-    const authBtn = document.getElementById("authBtn");
-    const toggleAuth = document.getElementById("toggleAuth");
-    const authTitle = document.getElementById("authTitle");
-
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    let isLogin = true;
-
-    // toggle login / signup
-    document.addEventListener("click", e => {
-      if (e.target.id === "toggleLink") {
-        isLogin = !isLogin;
-        authTitle.textContent = isLogin ? "Login" : "Sign Up";
-        authBtn.textContent = isLogin ? "Login" : "Sign Up";
-        toggleAuth.innerHTML = isLogin
-          ? `Don't have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Sign Up</span>`
-          : `Already have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Login</span>`;
-      }
-    });
-
-
-    /* -------------------------------
-       AUTH ACTIONS
-    --------------------------------*/
-    authBtn.addEventListener("click", async () => {
-      const email = emailInput.value.trim();
-      const pass = passInput.value.trim();
-
-      if (!email || !pass) return alert("Fill all fields");
-
-      try {
-        if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, pass);
-        } else {
-          const user = await createUserWithEmailAndPassword(auth, email, pass);
-          await setDoc(doc(db, "users", user.user.uid), { transactions: [] });
-        }
-      } catch (e) {
-        alert(e.message);
-      }
-    });
-
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-    });
-
-
-    /* -------------------------------
-       EXPENSE TRACKER (firebase only)
-    --------------------------------*/
-    let transactions = [];
-
-    const descInput = document.getElementById('descInput');
-    const amountInput = document.getElementById('amountInput');
-    const addBtn = document.getElementById('addBtn');
-    const transactionList = document.getElementById('transactionList');
-    const balanceEl = document.getElementById('balance');
-    const incomeEl = document.getElementById('income');
-    const expenseEl = document.getElementById('expense');
-
-    function updateUI() {
-      transactionList.innerHTML = "";
-      let income = 0, expense = 0;
-
-      transactions.forEach(t => {
-        const li = document.createElement("li");
-        li.classList.add(t.amount > 0 ? "income" : "expense");
-
-        li.innerHTML = `
-            <span>${t.desc}</span>
-            <span>৳${t.amount}</span>
-        `;
-
-        transactionList.appendChild(li);
-
-        if (t.amount > 0) income += t.amount;
-        else expense += t.amount;
-      });
-
-      balanceEl.textContent = "৳" + (income + expense);
-      incomeEl.textContent = "৳" + income;
-      expenseEl.textContent = "৳" + Math.abs(expense);
-    }
-
-    addBtn.addEventListener("click", async () => {
-      const desc = descInput.value.trim();
-      const amount = parseFloat(amountInput.value.trim());
-
-      if (!desc || isNaN(amount)) return;
-
-      transactions.push({ desc, amount });
-
-      descInput.value = "";
-      amountInput.value = "";
-      updateUI();
-
-      const user = auth.currentUser;
-      await setDoc(doc(db, "users", user.uid), { transactions });
-    });
-
-
-    /* -------------------------------
-       AUTH STATE HANDLER
-    --------------------------------*/
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        authSection.style.display = "none";
-        appSection.style.display = "block";
-
-        const snap = await getDoc(doc(db, "users", user.uid));
-
-        if (snap.exists()) {
-          transactions = snap.data().transactions || [];
-        } else {
-          transactions = [];
-          await setDoc(doc(db, "users", user.uid), { transactions: [] });
-        }
-
-        updateUI();
-
-      } else {
-        appSection.style.display = "none";
-        authSection.style.display = "block";
-
-        transactions = [];
-        updateUI();
-      }
-    });
-
-  </script>
-
+  <script src="script.js"></script>
 </body>
 
 </html>

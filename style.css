@@ -1,17 +1,24 @@
 /* Reset-ish */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 /* Page center container */
-html, body {
+html,
+body {
   height: 100%;
 }
+
 body {
   font-family: "Poppins", sans-serif;
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* ensures vertical centering */
+  min-height: 100vh;
+  /* ensures vertical centering */
   padding: 20px;
 }
 
@@ -26,34 +33,71 @@ body {
 }
 
 /* Headings */
-h1 { text-align: center; color: #1565c0; margin-bottom: 10px; }
-h3 { margin-bottom: 10px; }
+h1 {
+  text-align: center;
+  color: #1565c0;
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin-bottom: 10px;
+}
 
 /* Balance block */
-.balance { text-align: center; margin: 14px 0; }
+.balance {
+  text-align: center;
+  margin: 14px 0;
+}
 
 /* Summary */
-.summary { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-.income p { color: green; font-weight: 700; margin-top: 6px; }
-.expense p { color: red; font-weight: 700; margin-top: 6px; text-align: right; }
+.summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.income p {
+  color: green;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.expense p {
+  color: red;
+  font-weight: 700;
+  margin-top: 6px;
+  text-align: right;
+}
 
 /* Form inputs: keep consistent style across auth and app */
-input[type="text"], input[type="password"], input[type="number"] {
+input[type="text"],
+input[type="password"],
+input[type="number"] {
   width: 100%;
   padding: 12px 14px;
   margin-top: 8px;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background-color: #f1f3f8;
   outline: none;
   font-size: 14px;
 }
 
 /* input focus */
-input:focus { box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08); border-color: rgba(25,118,210,0.28); }
+input:focus {
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08);
+  border-color: rgba(25, 118, 210, 0.28);
+}
 
 /* Input area (app) */
-.input { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 12px; }
+.input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 
 /* Buttons */
 button {
@@ -71,7 +115,10 @@ button.primary {
   width: 100%;
   margin-top: 10px;
 }
-button.primary:hover { background: #0d47a1; }
+
+button.primary:hover {
+  background: #0d47a1;
+}
 
 /* Logout button */
 .logout {
@@ -80,10 +127,20 @@ button.primary:hover { background: #0d47a1; }
   background: crimson;
   color: #fff;
 }
-.logout:hover { background: darkred; }
+
+.logout:hover {
+  background: darkred;
+}
 
 /* Transaction list */
-ul { list-style: none; padding: 0; margin-top: 10px; max-height: 260px; overflow: auto; }
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  max-height: 260px;
+  overflow: auto;
+}
+
 li {
   background: #f7f7f7;
   margin-top: 10px;
@@ -95,8 +152,14 @@ li {
   gap: 10px;
   border-radius: 8px;
 }
-li.income { border-color: green; }
-li.expense { border-color: red; }
+
+li.income {
+  border-color: green;
+}
+
+li.expense {
+  border-color: red;
+}
 
 .desc {
   flex: 1;
@@ -106,27 +169,63 @@ li.expense { border-color: red; }
   text-overflow: ellipsis;
   padding-right: 8px;
 }
-.amount { min-width: 80px; text-align: right; font-weight: 600; }
+
+.amount {
+  min-width: 80px;
+  text-align: right;
+  font-weight: 600;
+}
 
 /* action buttons */
-.action-btns { display: flex; gap: 8px; align-items: center; }
-.delete-btn, .edit-btn {
+.action-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.delete-btn,
+.edit-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   font-weight: 700;
   padding: 4px 6px;
 }
-.delete-btn { color: crimson; }
-.edit-btn { color: #e31111; }
+
+.delete-btn {
+  color: crimson;
+}
+
+.edit-btn {
+  color: #e31111;
+}
 
 /* Auth specific quick styling (keeps layout centered) */
-.auth-container { text-align: center; }
-#toggleAuth { margin-top: 10px; font-size: 14px; color: rgba(0,0,0,0.7); }
-#toggleAuth span { color: #1976d2; cursor: pointer; text-decoration: underline; }
+.auth-container {
+  text-align: center;
+}
+
+#toggleAuth {
+  margin-top: 10px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+#toggleAuth span {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
 
 /* Responsive smaller screens */
 @media (max-width: 420px) {
-  .card { width: 100%; padding: 16px; border-radius: 12px; }
-  .amount { min-width: 70px; }
+  .card {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .amount {
+    min-width: 70px;
+  }
 }

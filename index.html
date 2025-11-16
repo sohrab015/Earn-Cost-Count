@@ -1,263 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Expense Tracker</title>
+  <meta charset="UTF-8">
+  <title>Expense Tracker + Firebase Auth</title>
+
   <style>
-    /* ---------- style.css (inlined) ---------- */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body { height: 100%; }
     body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      font-family: Arial;
       padding: 20px;
+      background: #f2f2f2;
     }
 
-    .card {
-      background: #fff;
-      padding: 22px;
-      border-radius: 14px;
-      box-shadow: 0 8px 30px rgba(15, 30, 60, 0.08);
-      width: 360px;
-      max-width: calc(100% - 40px);
-    }
-
-    h1 { text-align: center; color: #1565c0; margin-bottom: 10px; }
-    h3 { margin-bottom: 10px; }
-
-    .balance { text-align: center; margin: 14px 0; }
-
-    .summary { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-    .income p { color: green; font-weight: 700; margin-top: 6px; }
-    .expense p { color: red; font-weight: 700; margin-top: 6px; text-align: right; }
-
-    input[type="text"], input[type="password"], input[type="number"] {
-      width: 100%;
-      padding: 12px 14px;
-      margin-top: 8px;
+    #authSection,
+    #appSection {
+      width: 350px;
+      margin: 50px auto;
+      padding: 20px;
+      background: white;
       border-radius: 10px;
-      border: 1px solid rgba(0,0,0,0.08);
-      background-color: #f1f3f8;
-      outline: none;
-      font-size: 14px;
+      box-shadow: 0 0 10px #ccc;
     }
 
-    input:focus { box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08); border-color: rgba(25,118,210,0.28); }
-
-    .input { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 12px; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 9px 0;
+    }
 
     button {
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      font-weight: 600;
-    }
-
-    button.primary {
-      background: #1976d2;
-      color: #fff;
       width: 100%;
-      margin-top: 10px;
-    }
-    button.primary:hover { background: #0d47a1; }
-
-    .logout {
-      width: 100%;
-      margin-top: 12px;
-      background: crimson;
-      color: #fff;
-    }
-    .logout:hover { background: darkred; }
-
-    ul { list-style: none; padding: 0; margin-top: 10px; max-height: 260px; overflow: auto; }
-    li {
-      background: #f7f7f7;
-      margin-top: 10px;
       padding: 10px;
-      border-left: 5px solid;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    #transactionList li {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      border-radius: 8px;
+      padding: 8px;
+      background: #fff;
+      margin-top: 6px;
+      border-radius: 6px;
+      border-left: 5px solid;
     }
-    li.income { border-color: green; }
-    li.expense { border-color: red; }
 
-    .desc { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
-    .amount { min-width: 80px; text-align: right; font-weight: 600; }
+    .income {
+      border-color: green;
+    }
 
-    .action-btns { display: flex; gap: 8px; align-items: center; }
-    .delete-btn, .edit-btn { background: transparent; border: none; cursor: pointer; font-weight: 700; padding: 4px 6px; }
-    .delete-btn { color: crimson; }
-    .edit-btn { color: #e31111; }
+    .expense {
+      border-color: red;
+    }
 
-    .auth-container { text-align: center; }
-    #toggleAuth { margin-top: 10px; font-size: 14px; color: rgba(0,0,0,0.7); }
-    #toggleAuth span { color: #1976d2; cursor: pointer; text-decoration: underline; }
-
-    @media (max-width: 420px) {
-      .card { width: 100%; padding: 16px; border-radius: 12px; }
-      .amount { min-width: 70px; }
+    .action-btns button {
+      margin-left: 5px;
     }
   </style>
 </head>
+
 <body>
-  <!-- Authentication Section -->
-  <div id="authSection" class="card auth-container">
-    <h1>💰 Expense Tracker</h1>
-    <div id="authBox">
-      <h3 id="authTitle">Login</h3>
-      <input type="text" id="username" placeholder="Email (use real email)" autocomplete="username" />
-      <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
-      <button id="authBtn" class="primary">Login</button>
-      <p id="toggleAuth">Don't have an account? <span id="toggleLink">Sign Up</span></p>
-    </div>
+
+  <!-- Authentication UI -->
+  <div id="authSection">
+    <h2 id="authTitle">Login</h2>
+
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button id="authBtn">Login</button>
+
+    <p id="toggleAuth">
+      Don't have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Sign Up</span>
+    </p>
   </div>
 
-  <!-- Expense Tracker App -->
-  <div class="container card" id="appSection" style="display:none;">
-    <h1>💰 Expense Tracker</h1>
+  <!-- Main App -->
+  <div id="appSection" style="display:none;">
+    <h2>Expense Tracker</h2>
 
-    <div class="balance">
-      <h2>Your Balance</h2>
-      <h3 id="balance">৳0</h3>
-    </div>
+    <h3>Balance: <span id="balance">৳0</span></h3>
+    <p>Income: <span id="income">৳0</span></p>
+    <p>Expense: <span id="expense">৳0</span></p>
 
-    <div class="summary">
-      <div class="income">
-        <h4>Income</h4>
-        <p id="income">৳0</p>
-      </div>
-      <div class="expense">
-        <h4>Expense</h4>
-        <p id="expense">৳0</p>
-      </div>
-    </div>
+    <input id="descInput" placeholder="Description">
+    <input id="amountInput" placeholder="Amount">
 
-    <div class="input">
-      <h3>Add Transaction</h3>
-      <input type="text" id="descInput" placeholder="Enter Description..." />
-      <input type="number" id="amountInput" placeholder="Enter Amount [use Minus(-) for Expense]" />
-      <button id="addBtn" class="primary">Add</button>
-    </div>
+    <button id="addBtn">Add</button>
+    <button id="logoutBtn" style="background:red;color:white;">Logout</button>
 
-    <h3>History</h3>
     <ul id="transactionList"></ul>
-
-    <button id="logoutBtn" class="logout">Logout</button>
   </div>
 
-  <!-- =========================
-       Original Expense Tracker JS (kept logic intact)
-       This runs first (not a module).
-       ========================= -->
-  <script>
-  // =========================
-  // Original Expense Tracker
-  // (kept logic intact)
-  // =========================
-  // Use a global transactions var so firebase module can access/replace it later
-  window.transactions = JSON.parse(localStorage.getItem('transactions')) || []
 
-  const descInput = document.getElementById('descInput')
-  const amountInput = document.getElementById('amountInput')
-  const addBtn = document.getElementById('addBtn')
-  const transactionList = document.getElementById('transactionList')
-  const balanceEl = document.getElementById('balance')
-  const incomeEl = document.getElementById('income')
-  const expenseEl = document.getElementById('expense')
-
-  function updateUI() {
-      transactionList.innerHTML = ''
-      let income = 0
-      let expense = 0
-
-      window.transactions.forEach((t, index) => {
-          const li = document.createElement('li')
-          li.classList.add(t.amount > 0 ? 'income' : 'expense')
-          li.innerHTML =
-          `
-              <span class="desc">${t.desc}</span>
-              <span class="amount">৳${t.amount}</span>
-              <div class="action-btns">
-                  <button class="edit-btn" onclick="editTransaction(${index})">✎</button>
-                  <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
-              </div>
-          `
-
-          transactionList.appendChild(li)
-
-          if (t.amount > 0) income += t.amount
-          else expense += t.amount
-      })
-
-      const balance = income + expense
-      balanceEl.textContent = `৳${(balance).toFixed(2)}`
-      incomeEl.textContent = `৳${(income).toFixed(2)}`
-      expenseEl.textContent = `৳${Math.abs(expense).toFixed(2)}`
-
-      localStorage.setItem('transactions', JSON.stringify(window.transactions))
-
-      if (balance > 0) {
-          balanceEl.style.color = "green"
-      } else if (balance < 0) {
-          balanceEl.style.color = "red"
-      } else {
-          balanceEl.style.color = "#01040aff"
-      }
-  }
-
-  addBtn.addEventListener('click', () => {
-      const desc = descInput.value.trim()
-      const amount = parseFloat(amountInput.value.trim())
-
-      if (!desc || isNaN(amount)) return
-
-      window.transactions.push({ desc, amount })
-      descInput.value = ''
-      amountInput.value = ''
-      updateUI()
-  })
-
-  function deleteTransaction(index) {
-      window.transactions.splice(index, 1)
-      updateUI()
-  }
-
-  function editTransaction(index) {
-      const newDesc = prompt("Edit Description:", window.transactions[index].desc)
-      const newAmount = prompt("Edit Amount:", window.transactions[index].amount)
-
-      if (newDesc === null || newAmount === null) return
-      if (newDesc.trim() === "" || isNaN(parseFloat(newAmount))) {
-          alert("Invalid input")
-          return
-      }
-
-      window.transactions[index].desc = newDesc.trim()
-      window.transactions[index].amount = parseFloat(newAmount)
-
-      updateUI()
-  }
-
-  updateUI()
-  </script>
-
-  <!-- =========================
-       Firebase module (must load after original script)
-       ========================= -->
   <script type="module">
-    // Firebase imports
+
+    /* -------------------------------
+       Firebase Setup
+    --------------------------------*/
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
     import {
       getAuth,
       createUserWithEmailAndPassword,
@@ -265,15 +106,14 @@
       signOut,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
     import {
       getFirestore,
       doc,
-      onSnapshot,
       setDoc,
       getDoc
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    // ---------- Firebase config ----------
     const firebaseConfig = {
       apiKey: "AIzaSyCSSwkgrigkZfau6uTJF-6j5ECepCisR7I",
       authDomain: "earn-cost-count.firebaseapp.com",
@@ -281,149 +121,153 @@
       storageBucket: "earn-cost-count.firebasestorage.app",
       messagingSenderId: "318934337712",
       appId: "1:318934337712:web:b69a340ffd1bde45705375",
-      measurementId: "G-73QX436ZEQ"
     };
 
     const app = initializeApp(firebaseConfig);
-    try { getAnalytics(app); } catch(e){ /* ignore analytics errors */ }
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // DOM refs (same IDs)
-    const authSection = document.getElementById('authSection');
-    const appSection = document.getElementById('appSection');
-    const authTitle = document.getElementById('authTitle');
-    const authBtn = document.getElementById('authBtn');
-    const toggleAuth = document.getElementById('toggleAuth');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const logoutBtn = document.getElementById('logoutBtn');
 
-    let isLoginMode = true;
-    let userDocUnsub = null;
-    let originalUpdateUI = window.updateUI; // keep reference to original
+    /* -------------------------------
+       DOM
+    --------------------------------*/
+    const authSection = document.getElementById("authSection");
+    const appSection = document.getElementById("appSection");
 
-    // Toggle login/signup (same UI)
-    toggleAuth.addEventListener('click', (e) => {
-      if (e.target && e.target.id === 'toggleLink') {
-        isLoginMode = !isLoginMode;
-        authTitle.textContent = isLoginMode ? 'Login' : 'Sign Up';
-        authBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
-        toggleAuth.innerHTML = isLoginMode
-          ? `Don't have an account? <span id="toggleLink">Sign Up</span>`
-          : `Already have an account? <span id="toggleLink">Login</span>`;
+    const emailInput = document.getElementById("email");
+    const passInput = document.getElementById("password");
+    const authBtn = document.getElementById("authBtn");
+    const toggleAuth = document.getElementById("toggleAuth");
+    const authTitle = document.getElementById("authTitle");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    let isLogin = true;
+
+    // toggle login / signup
+    document.addEventListener("click", e => {
+      if (e.target.id === "toggleLink") {
+        isLogin = !isLogin;
+        authTitle.textContent = isLogin ? "Login" : "Sign Up";
+        authBtn.textContent = isLogin ? "Login" : "Sign Up";
+        toggleAuth.innerHTML = isLogin
+          ? `Don't have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Sign Up</span>`
+          : `Already have an account? <span id="toggleLink" style="color:blue;cursor:pointer;">Login</span>`;
       }
     });
 
-    // Auth button: signup or login with Firebase
-    authBtn.addEventListener('click', async () => {
-      const email = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
 
-      if (!email || !password) {
-        alert('Please fill all fields.');
-        return;
-      }
+    /* -------------------------------
+       AUTH ACTIONS
+    --------------------------------*/
+    authBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const pass = passInput.value.trim();
+
+      if (!email || !pass) return alert("Fill all fields");
 
       try {
-        if (isLoginMode) {
-          await signInWithEmailAndPassword(auth, email, password);
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, pass);
         } else {
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          // create user doc if not exists
-          const ud = doc(db, 'users', cred.user.uid);
-          await setDoc(ud, { transactions: [] }, { merge: true });
-          alert('Signup successful!');
+          const user = await createUserWithEmailAndPassword(auth, email, pass);
+          await setDoc(doc(db, "users", user.user.uid), { transactions: [] });
         }
-
-        usernameInput.value = '';
-        passwordInput.value = '';
-      } catch (err) {
-        alert(err.message);
+      } catch (e) {
+        alert(e.message);
       }
     });
 
-    // Function: attach Firestore realtime listener & override updateUI to save
-    function attachUserSync(user) {
-      const userDocRef = doc(db, 'users', user.uid);
 
-      // Unsubscribe previous if exists
-      if (userDocUnsub) { userDocUnsub(); userDocUnsub = null; }
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
 
-      // On remote changes -> overwrite local transactions and update UI
-      userDocUnsub = onSnapshot(userDocRef, (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-          // Replace local array without breaking reference
-          window.transactions = data.transactions || [];
-        } else {
-          window.transactions = [];
-        }
-        // ensure localStorage also updated by calling originalUpdateUI
-        originalUpdateUI();
-      }, (err) => {
-        console.error('onSnapshot error', err);
+
+    /* -------------------------------
+       EXPENSE TRACKER (firebase only)
+    --------------------------------*/
+    let transactions = [];
+
+    const descInput = document.getElementById('descInput');
+    const amountInput = document.getElementById('amountInput');
+    const addBtn = document.getElementById('addBtn');
+    const transactionList = document.getElementById('transactionList');
+    const balanceEl = document.getElementById('balance');
+    const incomeEl = document.getElementById('income');
+    const expenseEl = document.getElementById('expense');
+
+    function updateUI() {
+      transactionList.innerHTML = "";
+      let income = 0, expense = 0;
+
+      transactions.forEach(t => {
+        const li = document.createElement("li");
+        li.classList.add(t.amount > 0 ? "income" : "expense");
+
+        li.innerHTML = `
+            <span>${t.desc}</span>
+            <span>৳${t.amount}</span>
+        `;
+
+        transactionList.appendChild(li);
+
+        if (t.amount > 0) income += t.amount;
+        else expense += t.amount;
       });
 
-      // Monkey-patch updateUI to save to Firestore after running original UI logic
-      window.updateUI = function () {
-        originalUpdateUI();
-        // save to Firestore (store under users/{uid}.transactions)
-        setDoc(userDocRef, { transactions: window.transactions }).catch(err => {
-          console.error('Failed to save transactions to Firestore:', err);
-        });
-      };
+      balanceEl.textContent = "৳" + (income + expense);
+      incomeEl.textContent = "৳" + income;
+      expenseEl.textContent = "৳" + Math.abs(expense);
     }
 
-    // Detach and restore original updateUI (used on logout)
-    function detachUserSync() {
-      if (userDocUnsub) { userDocUnsub(); userDocUnsub = null; }
-      window.updateUI = originalUpdateUI;
-    }
+    addBtn.addEventListener("click", async () => {
+      const desc = descInput.value.trim();
+      const amount = parseFloat(amountInput.value.trim());
 
-    // Auth state listener
+      if (!desc || isNaN(amount)) return;
+
+      transactions.push({ desc, amount });
+
+      descInput.value = "";
+      amountInput.value = "";
+      updateUI();
+
+      const user = auth.currentUser;
+      await setDoc(doc(db, "users", user.uid), { transactions });
+    });
+
+
+    /* -------------------------------
+       AUTH STATE HANDLER
+    --------------------------------*/
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // show app
-        authSection.style.display = 'none';
-        appSection.style.display = 'block';
+        authSection.style.display = "none";
+        appSection.style.display = "block";
 
-        // ensure user doc exists and load initial data
-        const userDocRef = doc(db, 'users', user.uid);
-        try {
-          const docSnap = await getDoc(userDocRef);
-          if (docSnap.exists()) {
-            window.transactions = docSnap.data().transactions || [];
-            originalUpdateUI();
-          } else {
-            // create empty
-            await setDoc(userDocRef, { transactions: window.transactions || [] });
-          }
-        } catch (err) {
-          console.error('Error reading/creating user doc:', err);
+        const snap = await getDoc(doc(db, "users", user.uid));
+
+        if (snap.exists()) {
+          transactions = snap.data().transactions || [];
+        } else {
+          transactions = [];
+          await setDoc(doc(db, "users", user.uid), { transactions: [] });
         }
 
-        // attach realtime sync + override updateUI
-        attachUserSync(user);
+        updateUI();
+
       } else {
-        // logged out -> show auth, detach firestore sync
-        detachUserSync();
-        authSection.style.display = 'block';
-        appSection.style.display = 'none';
-        // keep using localStorage transactions (already set)
-        window.transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-        originalUpdateUI();
+        appSection.style.display = "none";
+        authSection.style.display = "block";
+
+        transactions = [];
+        updateUI();
       }
     });
 
-    // Logout
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-      } catch (err) {
-        console.error('signout err', err);
-      }
-    });
   </script>
+
 </body>
+
 </html>

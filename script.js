@@ -1,5 +1,11 @@
+// -------------------
+// Transaction Data
+// -------------------
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
+// -------------------
+// DOM Elements
+// -------------------
 const descInput = document.getElementById("descInput");
 const amountInput = document.getElementById("amountInput");
 const addBtn = document.getElementById("addBtn");
@@ -8,6 +14,16 @@ const balanceEl = document.getElementById("balance");
 const incomeEl = document.getElementById("income");
 const expenseEl = document.getElementById("expense");
 
+// -------------------
+// Auth Section (UI)
+const authSection = document.getElementById('authSection');
+const appSection = document.getElementById('appSection');
+const logoutBtn = document.getElementById('logoutBtn');
+// -------------------
+
+// -------------------
+// Update UI Function
+// -------------------
 function updateUI() {
   transactionList.innerHTML = "";
 
@@ -35,14 +51,26 @@ function updateUI() {
   incomeEl.textContent = `৳${income}`;
   expenseEl.textContent = `৳${Math.abs(expense)}`;
 
+  // --------- BALANCE COLOR ---------
+  if (balance > 0) {
+    balanceEl.style.color = "green";
+  } else if (balance < 0) {
+    balanceEl.style.color = "red";
+  } else {
+    balanceEl.style.color = "#01040a"; // default color for 0
+  }
+
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
+// -------------------
+// Add Transaction
+// -------------------
 addBtn.addEventListener("click", () => {
   const desc = descInput.value.trim();
-  const amount = Number(amountInput.value);
+  const amount = parseFloat(amountInput.value.trim());
 
-  if (!desc || !amount) return;
+  if (!desc || isNaN(amount)) return;
 
   transactions.push({ desc, amount });
   descInput.value = "";
@@ -50,19 +78,43 @@ addBtn.addEventListener("click", () => {
   updateUI();
 });
 
+// -------------------
+// Delete Transaction
+// -------------------
 function deleteTransaction(index) {
   transactions.splice(index, 1);
   updateUI();
 }
 
+// -------------------
+// Edit Transaction
+// -------------------
 function editTransaction(index) {
-  const desc = prompt("Edit description", transactions[index].desc);
-  const amount = prompt("Edit amount", transactions[index].amount);
+  const newDesc = prompt("Edit Description:", transactions[index].desc);
+  const newAmount = prompt("Edit Amount:", transactions[index].amount);
 
-  if (!desc || isNaN(amount)) return;
+  if (newDesc === null || newAmount === null) return;
+  if (newDesc.trim() === "" || isNaN(parseFloat(newAmount))) {
+    alert("Invalid input");
+    return;
+  }
 
-  transactions[index] = { desc, amount: Number(amount) };
+  transactions[index] = { desc: newDesc.trim(), amount: parseFloat(newAmount) };
   updateUI();
 }
 
+// -------------------
+// Logout Button
+// -------------------
+logoutBtn.addEventListener('click', () => {
+  localStorage.removeItem('currentUser'); // if you want to keep per-user logic
+  transactions = [];
+  updateUI();
+  authSection.style.display = "block";
+  appSection.style.display = "none";
+});
+
+// -------------------
+// Initial Render
+// -------------------
 updateUI();

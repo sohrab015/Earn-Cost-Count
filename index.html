@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body> <!-- Authentication Section -->
+<body>
+
+  <!-- Authentication Section -->
   <div id="authSection" class="card auth-container">
+
     <h1>💰 Expense Tracker</h1>
     <div id="authBox">
       <h3 id="authTitle">Login</h3> <input type="text" id="username" placeholder="Username" autocomplete="username" />
@@ -17,32 +20,51 @@
         id="authBtn" class="primary">Login</button>
       <p id="toggleAuth">Don't have an account? <span id="toggleLink">Sign Up</span></p>
     </div>
-  </div> <!-- Expense Tracker App (original UI) -->
+
+  </div>
+  
+
+  <!-- Expense Tracker App (main UI) -->
   <div class="container card" id="appSection" style="display:none;">
+    
     <h1>💰 Expense Tracker</h1>
+
     <div class="balance">
       <h2>Your Balance</h2>
       <h3 id="balance">৳0</h3>
     </div>
+
     <div class="summary">
+
       <div class="income">
         <h4>Income</h4>
         <p id="income">৳0</p>
       </div>
+
       <div class="expense">
         <h4>Expense</h4>
         <p id="expense">৳0</p>
       </div>
+      
     </div>
+
     <div class="input">
-      <h3>Add Transaction</h3> <input type="text" id="descInput" placeholder="Enter Description..." /> <input
-        type="number" id="amountInput" placeholder="Enter Amount [use Minus(-) for Expense]" /> <button id="addBtn"
-        class="primary">Add</button>
+
+      <h3>Add Transaction</h3>
+      <input type="text" id="descInput" placeholder="Enter Description..." /> 
+      <input type="number" id="amountInput" placeholder="Enter Amount [use Minus(-) for Expense]" /> 
+      <button id="addBtn" class="primary">Add</button>
+
     </div>
+
     <h3>History</h3>
-    <ul id="transactionList"></ul> <button id="logoutBtn" class="logout">Logout</button>
+    <ul id="transactionList"></ul> 
+    <button id="logoutBtn" class="logout">Logout</button>
+
   </div>
+
   <script src="script.js"></script>
+
 </body>
 
 </html>
